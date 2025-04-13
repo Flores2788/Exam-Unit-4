@@ -72,14 +72,10 @@ const games = [
 
 
 
-games.forEach(gameData => {
-  const game = new Game(gameData);  
-  saveGame(game);  
-});
 
 
 function loadGamesFromStorage() {
-  games = []; 
+  games.length = 0; // Clear the array
   for (let i = 0; i < localStorage.length; i++) {
     const key = localStorage.key(i);
     try {
@@ -93,7 +89,7 @@ function loadGamesFromStorage() {
   }
 }
 
-loadGamesFromStorage
+
 
 function outputGamesAsJSON() {
   return JSON.stringify(games, null, 2); 
@@ -105,16 +101,17 @@ function saveGame(game) {
   games.push(game);  
 }
 
-
 function importGamesFromJSON(jsonData) {
   try {
-    const gamesArray = JSON.parse(jsonData); 
-    gamesArray.forEach(gameData => {
-      const game = new Game(gameData);  
-      saveGame(game);  
-    });
+      const gamesArray = JSON.parse(jsonData);
+      gamesArray.forEach(gameData => {
+          if (!games.some(g => g.title === gameData.title)) {
+              const game = new Game(gameData);
+              saveGame(game);
+          }
+      });
   } catch (error) {
-    console.error("Error importing games:", error);
+      console.error("Error importing games:", error);
   }
 }
 
@@ -142,42 +139,41 @@ document.getElementById('importSource').addEventListener('change', function(even
 });
 
 function renderGames() {
+  const container = document.getElementById("gameRecordContainer");
+  container.innerHTML = ""; 
+
   games.forEach((game) => {
-    const card = document.createElement("div");
-    card.className = "game-card";
-    card.innerHTML = `
-      <h2>${game.title}</h2>
-      <p>Plays: <span class="playCount">${game.playCount}</span></p>
-      <p>Rating: <span class="ratingDisplay">${game.personalRating}</span>/10</p>
-      <input type="range" min="0" max="10" value="${game.personalRating}" class="ratingSlider" />
-      <button class="playedBtn">Played</button>
-    `;
-  
-    
-    card.querySelector(".ratingSlider").addEventListener("input", (e) => {
-      game.personalRating = parseInt(e.target.value);
-      card.querySelector(".ratingDisplay").textContent = game.personalRating;
-      updateGameInStorage(game);
-    });
-  
+      const card = document.createElement("div");
+      card.className = "game-card";
+      card.innerHTML = `
+          <h2>${game.title}</h2>
+          <p>Plays: <span class="playCount">${game.playCount}</span></p>
+          <p>Rating: <span class="ratingDisplay">${game.personalRating}</span>/10</p>
+          <input type="range" min="0" max="10" value="${game.personalRating}" class="ratingSlider" />
+          <button class="playedBtn">Played</button>
+      `;
 
-    card.querySelector(".playedBtn").addEventListener("click", () => {
-      game.playCount += 1;
-      card.querySelector(".playCount").textContent = game.playCount;
-      updateGameInStorage(game);
-    });
-  
-    document.getElementById("gameRecordContainer").appendChild(card);
+      card.querySelector(".ratingSlider").addEventListener("input", (e) => {
+          game.personalRating = parseInt(e.target.value);
+          card.querySelector(".ratingDisplay").textContent = game.personalRating;
+          updateGameInStorage(game);
+          renderGames(); // Re-render to reflect changes
+      });
+
+      card.querySelector(".playedBtn").addEventListener("click", () => {
+          game.playCount += 1;
+          card.querySelector(".playCount").textContent = game.playCount;
+          updateGameInStorage(game);
+          renderGames(); // Re-render to reflect changes
+      });
+
+      container.appendChild(card);
   });
-  };
+}
 
 
 
 
-games.forEach(gameData => {
-  const game = new Game(gameData);  
-  saveGame(game);  
-});
 
 document.getElementById('exportBtn').addEventListener('click', () => {
   console.log("Exported JSON:\n", outputGamesAsJSON());
@@ -186,12 +182,12 @@ document.getElementById('exportBtn').addEventListener('click', () => {
 function updateGameInStorage(game) {
   localStorage.setItem(game.title, JSON.stringify(game));
 
-
   const index = games.findIndex(g => g.title === game.title);
   if (index !== -1) {
-    games[index] = game;
+      games[index] = game; // Update the in-memory array
   }
 }
 
+loadGamesFromStorage();
 renderGames();
 outputGamesAsJSON();  

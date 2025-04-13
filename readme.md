@@ -3,3 +3,4 @@ Step 2: created game class in models file. I used constructor function to create
 Step 3: Implemented functions that retrieve, export and save games from localStorage. Also added all the examples from the json file provided.
 Step 4: Added file reader that imports JSON data to localStorage and populate in-memory array
 Step 5: added visual records of games with range button and button UI
+Step 6: done.
