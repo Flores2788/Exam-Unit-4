@@ -71,21 +71,29 @@ const games = [
 ];
 
 
+
 games.forEach(gameData => {
   const game = new Game(gameData);  
   saveGame(game);  
 });
 
 
-function loadGamesFromLocalStorage() {
+function loadGamesFromStorage() {
+  games = []; 
   for (let i = 0; i < localStorage.length; i++) {
     const key = localStorage.key(i);
-    const gameData = localStorage.getItem(key);
-    const gameObj = JSON.parse(gameData);
-    const game = new Game(gameObj);
-    games.push(game); 
+    try {
+      const data = JSON.parse(localStorage.getItem(key));
+      if (data && data.title) {
+        games.push(data);
+      }
+    } catch (e) {
+      console.warn("Skipping invalid data", key);
+    }
   }
 }
+
+loadGamesFromStorage
 
 function outputGamesAsJSON() {
   return JSON.stringify(games, null, 2); 
@@ -134,40 +142,34 @@ document.getElementById('importSource').addEventListener('change', function(even
 });
 
 function renderGames() {
-  const container = document.getElementById("gameList");
-  container.innerHTML = ""; // Clear before rendering
-
-  games.forEach(game => {
+  games.forEach((game) => {
     const card = document.createElement("div");
     card.className = "game-card";
-    card.style.border = "1px solid #ccc";
-    card.style.padding = "1em";
-    card.style.margin = "1em 0";
-    card.style.borderRadius = "8px";
-
     card.innerHTML = `
       <h2>${game.title}</h2>
-      <p><strong>Designer:</strong> ${game.designer}</p>
-      <p><strong>Artist:</strong> ${game.artist}</p>
-      <p><strong>Publisher:</strong> ${game.publisher}</p>
-      <p><strong>Year:</strong> ${game.year}</p>
-      <p><strong>Players:</strong> ${game.players}</p>
-      <p><strong>Time:</strong> ${game.time}</p>
-      <p><strong>Difficulty:</strong> ${game.difficulty}</p>
-      <p><strong>Play Count:</strong> ${game.playCount}</p>
-      <label>
-        Rating:
-        <input type="range" min="0" max="10" value="${game.personalRating}">
-      </label>
-      <button>Played</button>
-      <a href="${game.url}" target="_blank">More Info</a>
+      <p>Plays: <span class="playCount">${game.playCount}</span></p>
+      <p>Rating: <span class="ratingDisplay">${game.personalRating}</span>/10</p>
+      <input type="range" min="0" max="10" value="${game.personalRating}" class="ratingSlider" />
+      <button class="playedBtn">Played</button>
     `;
+  
+    
+    card.querySelector(".ratingSlider").addEventListener("input", (e) => {
+      game.personalRating = parseInt(e.target.value);
+      card.querySelector(".ratingDisplay").textContent = game.personalRating;
+      updateGameInStorage(game);
+    });
+  
 
-    container.appendChild(card);
+    card.querySelector(".playedBtn").addEventListener("click", () => {
+      game.playCount += 1;
+      card.querySelector(".playCount").textContent = game.playCount;
+      updateGameInStorage(game);
+    });
+  
+    document.getElementById("gameRecordContainer").appendChild(card);
   });
-}
-renderGames();
-loadGamesFromLocalStorage();
+  };
 
 
 
@@ -181,4 +183,15 @@ document.getElementById('exportBtn').addEventListener('click', () => {
   console.log("Exported JSON:\n", outputGamesAsJSON());
 });
 
+function updateGameInStorage(game) {
+  localStorage.setItem(game.title, JSON.stringify(game));
+
+
+  const index = games.findIndex(g => g.title === game.title);
+  if (index !== -1) {
+    games[index] = game;
+  }
+}
+
+renderGames();
 outputGamesAsJSON();  
