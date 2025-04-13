@@ -157,21 +157,47 @@ function renderGames() {
           game.personalRating = parseInt(e.target.value);
           card.querySelector(".ratingDisplay").textContent = game.personalRating;
           updateGameInStorage(game);
-          renderGames(); // Re-render to reflect changes
+          renderGames(); 
       });
 
       card.querySelector(".playedBtn").addEventListener("click", () => {
           game.playCount += 1;
           card.querySelector(".playCount").textContent = game.playCount;
           updateGameInStorage(game);
-          renderGames(); // Re-render to reflect changes
+          renderGames(); 
       });
 
       container.appendChild(card);
   });
 }
 
+document.getElementById('addGameForm').addEventListener('submit', (event) => {
+  event.preventDefault(); 
 
+  const form = event.target;
+
+
+  const newGame = {
+      title: form.title.value,
+      designer: form.designer.value,
+      year: parseInt(form.year.value),
+      players: form.players.value,
+      time: form.time.value,
+      difficulty: form.difficulty.value,
+      url: form.url.value,
+      playCount: 0, 
+      personalRating: parseInt(form.personalRating.value)
+  };
+
+
+  saveGame(newGame);
+
+
+  renderGames();
+
+
+  form.reset();
+});
 
 
 
@@ -184,7 +210,7 @@ function updateGameInStorage(game) {
 
   const index = games.findIndex(g => g.title === game.title);
   if (index !== -1) {
-      games[index] = game; // Update the in-memory array
+      games[index] = game; 
   }
 }
 
