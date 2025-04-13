@@ -1,14 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GameRecord</title>
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Record</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>GameRecord</h1>
+    <h1>Game Record Tracker</h1>
+    <button id="exportBtn">Export Games as JSON</button>
+    <div id="gameRecordContainer"></div>
+    <input type="file" id="importSource" accept=".json">
 
-  <script type="module" src="app.mjs"></script>
+    <script type="module" src="app.mjs"></script>
 </body>
 </html>

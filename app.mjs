@@ -2,43 +2,6 @@
 import Game from './models.js';
 
 
-function saveGame(game) {
-  const gameData = JSON.stringify(game);  
-  localStorage.setItem(game.title, gameData);  
-}
-
-
-function getAllGames() {
-  const games = [];
-  for (let i = 0; i < localStorage.length; i++) {
-    const key = localStorage.key(i);
-    const gameData = localStorage.getItem(key);
-    const gameObj = JSON.parse(gameData);  
-    const game = new Game(gameObj);  
-    games.push(game);
-  }
-  return games;
-}
-
-function outputGamesAsJSON() {
-  const games = getAllGames();  
-  const gamesJSON = JSON.stringify(games, null, 2);  
-  console.log(gamesJSON);  
-}
-
-function importGamesFromJSON(jsonData) {
-  try {
-    const gamesArray = JSON.parse(jsonData);  
-    gamesArray.forEach(gameData => {
-      const game = new Game(gameData);  
-      saveGame(game);  
-    });
-  } catch (error) {
-    console.error("Error importing games:", error);
-  }
-}
-
-
 const games = [
   {
     title: "Terraforming Mars",
@@ -111,6 +74,79 @@ const games = [
 games.forEach(gameData => {
   const game = new Game(gameData);  
   saveGame(game);  
+});
+
+// 2. Load all games from localStorage when the app loads
+function loadGamesFromLocalStorage() {
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    const gameData = localStorage.getItem(key);
+    const gameObj = JSON.parse(gameData);
+    const game = new Game(gameObj);
+    games.push(game);  // Add the game to the in-memory array
+  }
+}
+
+function outputGamesAsJSON() {
+  return JSON.stringify(games, null, 2); // Nicely formatted JSON
+}
+
+// 3. Save a game to localStorage
+function saveGame(game) {
+  const gameData = JSON.stringify(game);
+  localStorage.setItem(game.title, gameData);  // Save as a key-value pair
+  games.push(game);  // Add game to in-memory record
+}
+
+// 4. Import games from a JSON file
+function importGamesFromJSON(jsonData) {
+  try {
+    const gamesArray = JSON.parse(jsonData);  // Parse the JSON string into an array
+    gamesArray.forEach(gameData => {
+      const game = new Game(gameData);  // Create a Game instance
+      saveGame(game);  // Save each game to localStorage and the in-memory array
+    });
+  } catch (error) {
+    console.error("Error importing games:", error);
+  }
+}
+
+// 5. Handle the file input event to read the JSON file
+document.getElementById('importSource').addEventListener('change', function(event) {
+  const file = event.target.files[0];
+  if (file && file.type === 'application/json') {
+    const reader = new FileReader();
+    
+    reader.onload = function(e) {
+      const jsonData = e.target.result;  // Get the file contents
+      importGamesFromJSON(jsonData);  // Import the games from the JSON data
+      console.log("Games imported successfully!");
+      console.log(games);  // Log the in-memory games array to the console
+    };
+    
+    reader.onerror = function(error) {
+      console.error("Error reading file:", error);
+    };
+    
+    reader.readAsText(file);  // Read the file as a text (JSON)
+  } else {
+    alert("Please select a valid JSON file.");
+  }
+});
+
+// 6. Call the loadGamesFromLocalStorage function when the app loads
+loadGamesFromLocalStorage();
+
+
+
+
+games.forEach(gameData => {
+  const game = new Game(gameData);  
+  saveGame(game);  
+});
+
+document.getElementById('exportBtn').addEventListener('click', () => {
+  console.log("Exported JSON:\n", outputGamesAsJSON());
 });
 
 outputGamesAsJSON();  
