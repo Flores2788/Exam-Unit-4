@@ -4,4 +4,5 @@ Step 3: Implemented functions that retrieve, export and save games from localSto
 Step 4: Added file reader that imports JSON data to localStorage and populate in-memory array
 Step 5: added visual records of games with range button and button UI
 Step 6: done.
-step 7: added ui and wrote code that handles form submission.
+step 7 and 8: added ui and wrote code that handles form submission.
+step 9: updated rendergames function and included a delete button, and then added delete function.

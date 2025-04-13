@@ -151,19 +151,26 @@ function renderGames() {
           <p>Rating: <span class="ratingDisplay">${game.personalRating}</span>/10</p>
           <input type="range" min="0" max="10" value="${game.personalRating}" class="ratingSlider" />
           <button class="playedBtn">Played</button>
+          <button class="deleteBtn">Delete</button> <!-- New Delete Button -->
       `;
 
+     
       card.querySelector(".ratingSlider").addEventListener("input", (e) => {
           game.personalRating = parseInt(e.target.value);
           card.querySelector(".ratingDisplay").textContent = game.personalRating;
           updateGameInStorage(game);
-          renderGames(); 
       });
 
+      
       card.querySelector(".playedBtn").addEventListener("click", () => {
           game.playCount += 1;
           card.querySelector(".playCount").textContent = game.playCount;
           updateGameInStorage(game);
+      });
+
+    
+      card.querySelector(".deleteBtn").addEventListener("click", () => {
+          deleteGame(game.title); 
           renderGames(); 
       });
 
@@ -199,7 +206,16 @@ document.getElementById('addGameForm').addEventListener('submit', (event) => {
   form.reset();
 });
 
+function deleteGame(title) {
 
+  localStorage.removeItem(title);
+
+
+  const index = games.findIndex((game) => game.title === title);
+  if (index !== -1) {
+      games.splice(index, 1); 
+  }
+}
 
 document.getElementById('exportBtn').addEventListener('click', () => {
   console.log("Exported JSON:\n", outputGamesAsJSON());
