@@ -1,8 +1,8 @@
-// app.mjs
 
-import Game from './models/Game.js';
 
-// Example instantiation using example.json-style data
+import Game from './models.js';
+
+
 const exampleData = {
   title: "Concordia",
   designer: "Mac Gerdts",
