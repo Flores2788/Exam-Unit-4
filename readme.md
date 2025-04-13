@@ -6,3 +6,4 @@ Step 5: added visual records of games with range button and button UI
 Step 6: done.
 step 7 and 8: added ui and wrote code that handles form submission.
 step 9: updated rendergames function and included a delete button, and then added delete function.
+step 10: added a dropdown menu for sorting options and then added logic to handle sorting.

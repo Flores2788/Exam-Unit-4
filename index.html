@@ -9,11 +9,23 @@
 </head>
 <body>
     <h1>Game Record Tracker</h1>
+   
+    <h2>Sort Games</h2>
+    <select id="sortOptions">
+        <option value="playCount">Play Count</option>
+        <option value="personalRating">Rating</option>
+        <option value="difficulty">Difficulty</option>
+        <option value="players">Player Count</option>
+    </select>
+    
     <button id="exportBtn">Export Games as JSON</button>
     <div id="gameRecordContainer"></div>
     
     <input type="file" id="importSource" accept=".json">
+    
+  
 
+    <button id="sortBtn">Sort</button>
     <h2>Add a New Game</h2>
     <form id="addGameForm">
         <label for="title">Title:</label>
@@ -42,6 +54,8 @@
 
         <button type="submit">Add Game</button>
     </form>
+
+   
 
     <script type="module" src="app.mjs"></script>
 

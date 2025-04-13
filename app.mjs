@@ -217,6 +217,25 @@ function deleteGame(title) {
   }
 }
 
+
+document.getElementById('sortBtn').addEventListener('click', () => {
+  const sortOption = document.getElementById('sortOptions').value;
+
+ 
+  games.sort((a, b) => {
+      if (sortOption === 'playCount' || sortOption === 'personalRating') {
+          return b[sortOption] - a[sortOption]; 
+      } else if (sortOption === 'difficulty') {
+          return a[sortOption].localeCompare(b[sortOption]); 
+      } else if (sortOption === 'players') {
+          return parseInt(a[sortOption]) - parseInt(b[sortOption]); 
+      }
+  });
+
+  renderGames(); 
+});
+
+
 document.getElementById('exportBtn').addEventListener('click', () => {
   console.log("Exported JSON:\n", outputGamesAsJSON());
 });
